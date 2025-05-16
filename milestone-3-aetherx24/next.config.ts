@@ -19,7 +19,8 @@ const nextConfig: NextConfig = {
         hostname: "placehold.co",
         pathname: "/**"
       }
-    ]
+    ],
+    dangerouslyAllowSVG: true,
   }
 };
 

@@ -26,11 +26,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          {/* Wrap Navigation and children in a div to ensure proper hydration */}
           <div className="flex flex-col min-h-screen">
             <Navigation />
             <main className="flex-grow">

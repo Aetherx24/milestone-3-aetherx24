@@ -1,4 +1,10 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# RevoShop - Online Store
+
+RevoShop is a modern online commerce platform built with Next.js, offering a seamless shopping experience tailored for customer shopping needs. 
+
+# Features 
+
+
 
 ## Getting Started
 

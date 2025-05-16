@@ -8,7 +8,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     return (
-        <link href={`/product/${product.id}`}>
+        <Link href={`/product/${product.id}`}>
             <div className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
                 <div className="relative w-full h-48 mb-4">
                     <Image
@@ -23,6 +23,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <p className="text-gray-600 mb-2">{product.category.name}</p>
                 <p className="text-xl font-bold">${product.price}</p>
             </div>
-        </link>
+        </Link>
     )
 }

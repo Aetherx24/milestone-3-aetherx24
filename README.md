@@ -4,7 +4,17 @@ RevoShop is a modern online commerce platform built with Next.js, offering a sea
 
 # Features 
 
+Product listing with grid layout
+- Individual product pages
+- Server-side rendered product details
+- Responsive design
+- Cart functionality (basic implementation)
 
+## Technologies Used
+- Next.js 13+ (App Router)
+- TypeScript
+- Tailwind CSS
+- FakeStore API
 
 ## Getting Started
 

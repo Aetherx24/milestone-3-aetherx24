@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { Product } from "@/types/product"
 import ProductCard from "@/components/ProductCard";
-import { getAllProducts } from "@/lib/api";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,7 +10,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await getAllProducts();
+        const res = await fetch('https://api.escuelajs.co/api/v1/products');
         const data = await res.json();
         setProducts(data);
       } catch (error) {

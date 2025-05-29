@@ -1,4 +1,4 @@
-# RevoShop - Online Store
+# Milestone 3 RevoShop
 
 RevoShop is a modern online commerce platform built with Next.js, offering a seamless shopping experience tailored for customer shopping needs. 
 

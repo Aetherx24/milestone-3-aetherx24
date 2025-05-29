@@ -1,6 +1,7 @@
 import { getProductById } from '@/lib/api';
 import Image from 'next/image';
 import { Product } from '@/types/product';
+import AddToCartButton from '@/components/AddToCartButton';
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product: Product = await getProductById(params.id);
@@ -17,6 +18,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,33vw"
             className="object-contain rounded-lg"
             priority
+            unoptimized
           />
         </div>
 
@@ -27,9 +29,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
           <p className="text-2xl font-bold mb-6">${product.price}</p>
           <p className="text-gray-600 mb-4">Category: {product.category.name}</p>
           
-          <button className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors w-fit">
-            Add to Cart
-          </button>
+          <AddToCartButton product={product} />
         </div>
       </div>
     </div>

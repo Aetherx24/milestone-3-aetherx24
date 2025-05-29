@@ -10,5 +10,11 @@ export default function Providers({ children }: { children: ReactNode }) {
     setMounted(true);
   }, []);
 
-  return mounted ? <CartProvider>{children}</CartProvider> : null;
+  return (
+    <CartProvider>
+      <div suppressHydrationWarning style={{ visibility: mounted ? 'visible' : 'hidden' }}>
+        {children}
+      </div>
+    </CartProvider>
+  );
 }

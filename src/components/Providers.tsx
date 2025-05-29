@@ -1,6 +1,7 @@
 "use client"
 
 import { CartProvider } from "@/context/CartContext"
+import { SessionProvider } from "next-auth/react"
 import { ReactNode, useEffect, useState } from "react"
 
 export default function Providers({ children }: { children: ReactNode }) {
@@ -11,10 +12,12 @@ export default function Providers({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <CartProvider>
-      <div suppressHydrationWarning style={{ visibility: mounted ? 'visible' : 'hidden' }}>
-        {children}
-      </div>
-    </CartProvider>
+    <SessionProvider>
+      <CartProvider>
+        <div suppressHydrationWarning style={{ visibility: mounted ? 'visible' : 'hidden' }}>
+          {children}
+        </div>
+      </CartProvider>
+    </SessionProvider>
   );
 }

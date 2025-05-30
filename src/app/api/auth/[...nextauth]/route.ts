@@ -10,25 +10,16 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        try {
-          const res = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
-          });
-
-          const user = await res.json();
-
-          if (res.ok && user) {
-            return user;
-          }
-          return null;
-        } catch (error) {
-          return null;
+        // This is where you would typically validate against your database
+        // For demo purposes, we'll use hardcoded credentials
+        if (credentials?.email === "admin@example.com" && credentials?.password === "admin123") {
+          return {
+            id: "1",
+            email: "admin@example.com",
+            name: "Admin User",
+          };
         }
+        return null;
       }
     })
   ],
@@ -37,10 +28,15 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
     },
     async session({ session, token }) {
-      session.user = token as any;
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
       return session;
     },
   },

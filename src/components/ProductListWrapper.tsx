@@ -1,0 +1,24 @@
+"use client"
+
+import { Suspense } from 'react'
+import dynamic from 'next/dynamic'
+import Loading from '@/components/Loading'
+import type { Product, Category } from '@/types'
+
+const ProductList = dynamic(() => import('@/components/ProductList'), {
+  loading: () => <Loading />,
+  ssr: false
+})
+
+interface ProductListWrapperProps {
+  initialProducts: Product[]
+  initialCategories: Category[]
+}
+
+export default function ProductListWrapper({ initialProducts, initialCategories }: ProductListWrapperProps) {
+  return (
+    <Suspense fallback={<Loading />}>
+      <ProductList initialProducts={initialProducts} initialCategories={initialCategories} />
+    </Suspense>
+  )
+} 

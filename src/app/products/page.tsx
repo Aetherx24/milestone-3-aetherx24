@@ -1,8 +1,4 @@
-import { getAllProducts, getProductsByCategory } from "@/lib/api"
-import { Product } from "@/types/product"
-import ProductCard from "@/components/ProductCard"
-import CategoryFilter from "@/components/CategoryFilter"
-import { Suspense } from "react"
+import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import Loading from '@/components/Loading'
 
@@ -12,22 +8,30 @@ const ProductList = dynamic(() => import('@/components/ProductList'), {
   ssr: false // Disable server-side rendering for this component
 })
 
-function ProductsGrid({ products }: { products: Product[] }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((product: Product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
-  );
+async function getProducts() {
+  const res = await fetch('https://api.escuelajs.co/api/v1/products', { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch products')
+  return res.json()
 }
 
-export default function ProductsPage() {
+async function getCategories() {
+  const res = await fetch('https://api.escuelajs.co/api/v1/categories', { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch categories')
+  return res.json()
+}
+
+export default async function ProductsPage() {
+  // Fetch data on the server
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories()
+  ])
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Products</h1>
       <Suspense fallback={<Loading />}>
-        <ProductList />
+        <ProductList initialProducts={products} initialCategories={categories} />
       </Suspense>
     </div>
   )

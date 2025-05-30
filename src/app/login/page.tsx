@@ -20,6 +20,8 @@ export default function LoginPage() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
+    console.log('Attempting login with:', { email, callbackUrl });
+
     try {
       const result = await signIn('credentials', {
         email,
@@ -28,18 +30,23 @@ export default function LoginPage() {
         callbackUrl,
       });
 
+      console.log('Sign in result:', result);
+
       if (result?.error) {
         setError('Invalid email or password');
         return;
       }
 
       if (result?.url) {
+        console.log('Redirecting to:', result.url);
         router.push(result.url);
       } else {
+        console.log('Redirecting to admin dashboard');
         router.push('/admin');
       }
       router.refresh();
     } catch (err) {
+      console.error('Login error:', err);
       setError('An error occurred during login');
     } finally {
       setLoading(false);
@@ -53,6 +60,9 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Use admin@example.com / admin123 to login as admin
+          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
@@ -73,6 +83,7 @@ export default function LoginPage() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
+                defaultValue="admin@example.com"
               />
             </div>
             <div>
@@ -87,6 +98,7 @@ export default function LoginPage() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
+                defaultValue="admin123"
               />
             </div>
           </div>

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '@/types/product'
 import { useCart } from '@/context/CartContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ProductCardProps {
     product: Product;
@@ -14,9 +14,15 @@ export default function ProductCard({ product }: ProductCardProps) {
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [showToast, setShowToast] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+    
     // Use a placeholder image if the product image is not available
     const imageUrl = product.images[0] || 'https://placehold.co/400x400?text=No+Image';
-    
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault(); // Prevent navigation when clicking the button
         addToCart(product, quantity);
@@ -26,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     return (
-        <div className="relative">
+        <div className="relative" suppressHydrationWarning>
             <div className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
                 <div className="relative w-full h-48 mb-4">
                     <Image
@@ -54,6 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             value={quantity}
                             onChange={(e) => setQuantity(Number(e.target.value))}
                             className="border rounded-md px-2 py-1 text-sm"
+                            disabled={!isClient}
                         >
                             {[1, 2, 3, 4, 5].map((num) => (
                                 <option key={num} value={num}>
@@ -72,6 +79,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <button
                             onClick={handleAddToCart}
                             className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                            disabled={!isClient}
                         >
                             Add to Cart
                         </button>
@@ -80,7 +88,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
 
             {/* Success Toast */}
-            {showToast && (
+            {isClient && showToast && (
                 <div className="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg transition-opacity duration-300">
                     Added {quantity} {quantity === 1 ? 'item' : 'items'} to cart!
                 </div>

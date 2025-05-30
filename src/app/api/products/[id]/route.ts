@@ -15,6 +15,7 @@ export async function GET(
     const product = await response.json();
     return NextResponse.json(product);
   } catch (error) {
+    console.error('Error fetching product:', error);
     return NextResponse.json(
       { error: 'Failed to fetch product' },
       { status: 500 }
@@ -28,7 +29,6 @@ export async function PUT(
 ) {
   try {
     const body = await request.json();
-    
     const response = await fetch(`${API_URL}/products/${params.id}`, {
       method: 'PUT',
       headers: {
@@ -42,14 +42,12 @@ export async function PUT(
     }
 
     const product = await response.json();
-    
-    // Revalidate the products page to update the cache
-    revalidatePath('/');
+    revalidatePath('/products');
     revalidatePath('/admin');
-    revalidatePath(`/product/${params.id}`);
-    
+    revalidatePath(`/products/${params.id}`);
     return NextResponse.json(product);
   } catch (error) {
+    console.error('Error updating product:', error);
     return NextResponse.json(
       { error: 'Failed to update product' },
       { status: 500 }
@@ -69,13 +67,12 @@ export async function DELETE(
     if (!response.ok) {
       throw new Error('Failed to delete product');
     }
-    
-    // Revalidate the products page to update the cache
-    revalidatePath('/');
+
+    revalidatePath('/products');
     revalidatePath('/admin');
-    
-    return NextResponse.json({ message: 'Product deleted successfully' });
+    return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('Error deleting product:', error);
     return NextResponse.json(
       { error: 'Failed to delete product' },
       { status: 500 }

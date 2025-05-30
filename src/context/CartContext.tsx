@@ -20,23 +20,28 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
+    setIsClient(true);
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
-      setItems(JSON.parse(savedCart));
+      try {
+        setItems(JSON.parse(savedCart));
+      } catch (error) {
+        console.error('Error parsing cart from localStorage:', error);
+        localStorage.removeItem('cart');
+      }
     }
-    setMounted(true);
   }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    if (mounted) {
+    if (isClient) {
       localStorage.setItem('cart', JSON.stringify(items));
     }
-  }, [items, mounted]);
+  }, [items, isClient]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
     setItems(prevItems => {
@@ -70,7 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
-    if (mounted) {
+    if (isClient) {
       localStorage.removeItem('cart');
     }
   };

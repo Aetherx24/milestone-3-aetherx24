@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = searchParams.get('callbackUrl') || '/admin';
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +25,7 @@ export default function LoginPage() {
         email,
         password,
         redirect: false,
+        callbackUrl,
       });
 
       if (result?.error) {
@@ -32,7 +33,12 @@ export default function LoginPage() {
         return;
       }
 
-      router.push(callbackUrl);
+      if (result?.url) {
+        router.push(result.url);
+      } else {
+        router.push('/admin');
+      }
+      router.refresh();
     } catch (err) {
       setError('An error occurred during login');
     } finally {

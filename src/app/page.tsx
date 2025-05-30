@@ -1,5 +1,4 @@
 import ProductListWrapper from '@/components/ProductListWrapper'
-import type { Product } from "@/types/product"
 
 async function getProducts() {
   try {

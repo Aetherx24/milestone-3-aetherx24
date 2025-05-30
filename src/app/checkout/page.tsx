@@ -1,12 +1,12 @@
 "use client"
 
 import { useCart } from '@/context/CartContext'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 
 export default function CheckoutPage() {
   const { items, getCartTotal, clearCart } = useCart()
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handleCheckout = async (e: React.FormEvent<HTMLFormElement>) => {

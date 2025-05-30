@@ -20,16 +20,6 @@ export default function CategoryFilter({ categories, onCategorySelect }: Categor
     setIsLoading(false);
   }, [searchParams]);
 
-  const handleCategoryClick = (categoryId: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (currentCategory === categoryId.toString()) {
-      params.delete('category');
-    } else {
-      params.set('category', categoryId.toString());
-    }
-    router.push(`/products?${params.toString()}`);
-  };
-
   if (isLoading) {
     return (
       <div className="mb-8">

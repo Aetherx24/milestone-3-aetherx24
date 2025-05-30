@@ -14,8 +14,15 @@ export function useFetch<T>(url: string, options?: RequestInit) {
   const [data, setData] = useState<T | null>(null)
   const [error, setError] = useState<Error | null>(null)
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
     const fetchData = async () => {
       try {
         // Check cache first
@@ -48,7 +55,7 @@ export function useFetch<T>(url: string, options?: RequestInit) {
     }
 
     fetchData()
-  }, [url, JSON.stringify(options)])
+  }, [url, JSON.stringify(options), mounted])
 
   return { data, error, loading }
 } 

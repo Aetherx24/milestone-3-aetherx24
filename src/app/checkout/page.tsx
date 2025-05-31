@@ -14,8 +14,7 @@ export default function CheckoutPage() {
     setIsProcessing(true)
 
     try {
-      // Here you would typically integrate with a payment processor
-      // For now, we'll just simulate a successful order
+      // Here typically integrate with a payment processor, for nowsimulate a successful order
       await new Promise(resolve => setTimeout(resolve, 1500))
       
       // Clear the cart after successful checkout

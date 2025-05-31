@@ -6,7 +6,7 @@ export default function FAQPage() {
       },
       {
         question: "What payment methods do you accept?",
-        answer: "We accept credit cards, debit cards, and various digital payment methods for your convenience."
+        answer: "We accept credit cards, debit cards, and various digital payment methods such as Qris, Gopay, and other digital payment methods."
       },
       {
         question: "How long does shipping take?",

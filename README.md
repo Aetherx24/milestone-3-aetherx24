@@ -109,23 +109,9 @@ npm test -- --coverage
 Create a production build:
 ```bash
 npm run build
-# or
-yarn build
 ```
 
 ## 🚀 Deployment
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
-
-### Deployment Steps:
-1. Push your code to GitHub
-2. Import your repository to Vercel
-3. Configure environment variables
-4. Deploy!
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👥 Contributing
 
@@ -141,3 +127,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📞 Support
 
 For support, email support@revoshop.com or open an issue in the repository.
+
+# This project is created by Muhammad Iqbal Maulana

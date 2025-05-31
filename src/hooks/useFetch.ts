@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react'
 
+interface FetchOptions extends RequestInit {
+  skip?: boolean
+}
+
+interface FetchState<T> {
+  data: T | null
+  error: Error | null
+  isLoading: boolean
+}
+
 interface Cache {
   [key: string]: {
     data: any
@@ -10,52 +20,53 @@ interface Cache {
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 const cache: Cache = {}
 
-export function useFetch<T>(url: string, options?: RequestInit) {
-  const [data, setData] = useState<T | null>(null)
-  const [error, setError] = useState<Error | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [mounted, setMounted] = useState(false)
+export function useFetch<T>(url: string, options: FetchOptions = {}) {
+  const [state, setState] = useState<FetchState<T>>({
+    data: null,
+    error: null,
+    isLoading: true,
+  })
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
-
-    const fetchData = async () => {
-      try {
-        // Check cache first
-        const cachedData = cache[url]
-        if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
-          setData(cachedData.data)
-          setLoading(false)
-          return
-        }
-
-        const response = await fetch(url, options)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const result = await response.json()
-        
-        // Update cache
-        cache[url] = {
-          data: result,
-          timestamp: Date.now()
-        }
-        
-        setData(result)
-        setError(null)
-      } catch (e) {
-        setError(e instanceof Error ? e : new Error('An error occurred'))
-      } finally {
-        setLoading(false)
-      }
+    if (options.skip) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      return
     }
 
-    fetchData()
-  }, [url, JSON.stringify(options), mounted])
+    const controller = new AbortController()
+    const { signal } = controller
 
-  return { data, error, loading }
+    setState(prev => ({ ...prev, isLoading: true }))
+
+    fetch(url, { ...options, signal })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        return res.json()
+      })
+      .then(data => {
+        setState({
+          data,
+          error: null,
+          isLoading: false,
+        })
+      })
+      .catch(error => {
+        if (error.name === 'AbortError') {
+          return
+        }
+        setState({
+          data: null,
+          error,
+          isLoading: false,
+        })
+      })
+
+    return () => {
+      controller.abort()
+    }
+  }, [url, JSON.stringify(options)])
+
+  return state
 } 

@@ -5,7 +5,7 @@ import { useCart } from '@/context/CartContext'
 import { useState } from 'react'
 
 export default function CheckoutPage() {
-  const { items, getCartTotal, clearCart } = useCart()
+  const { items, getTotalPrice, clearCart } = useCart()
   // const { data: session } = useSession()
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -50,18 +50,18 @@ export default function CheckoutPage() {
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <div className="space-y-4">
             {items.map(item => (
-              <div key={item.id} className="flex justify-between items-center">
+              <div key={item.product.id} className="flex justify-between items-center">
                 <div>
-                  <h3 className="font-medium">{item.title}</h3>
+                  <h3 className="font-medium">{item.product.name}</h3>
                   <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                 </div>
-                <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="font-medium">${(item.product.price * item.quantity).toFixed(2)}</p>
               </div>
             ))}
             <div className="border-t pt-4">
               <div className="flex justify-between items-center font-bold">
                 <span>Total</span>
-                <span>${getCartTotal().toFixed(2)}</span>
+                <span>${getTotalPrice().toFixed(2)}</span>
               </div>
             </div>
           </div>

@@ -1,34 +1,33 @@
 import '@testing-library/jest-dom'
 import React from 'react'
+import { configure } from '@testing-library/react'
+import { ImageProps } from 'next/image'
+
+// Configure testing-library
+configure({
+  testIdAttribute: 'data-testid',
+})
 
 // Mock next/image
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => {
-    const { src, alt, ...rest } = props
-    return React.createElement('img', {
-      src: typeof src === 'string' ? src : (src as any).src,
-      alt,
-      ...rest,
-    })
+  default: (props: ImageProps) => {
+    const { src, ...rest } = props
+    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+    return <img src={typeof src === 'string' ? src : (src as any).default || src} {...rest} />
   },
 }))
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
-  useRouter() {
-    return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      back: jest.fn(),
-    }
-  },
-  usePathname() {
-    return '/'
-  },
-  useSearchParams() {
-    return new URLSearchParams()
-  },
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+  }),
+  usePathname: () => '',
+  useSearchParams: () => new URLSearchParams(),
 }))
 
 // Mock next-auth

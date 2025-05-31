@@ -1,9 +1,10 @@
 "use client"
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Product } from '@/types/product';
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { Product } from '@/types';
 
-interface CartItem extends Product {
+interface CartItem {
+  product: Product;
   quantity: number;
 }
 
@@ -12,83 +13,87 @@ interface CartContextType {
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
-  getCartTotal: () => number;
+  isInCart: (productId: number) => boolean;
+  getItemQuantity: (productId: number) => number;
   clearCart: () => void;
+  getTotalItems: () => number;
+  getTotalPrice: () => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [isClient, setIsClient] = useState(false);
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    setIsClient(true);
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Error parsing cart from localStorage:', error);
-        localStorage.removeItem('cart');
-      }
-    }
-  }, []);
-
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    if (isClient) {
-      localStorage.setItem('cart', JSON.stringify(items));
-    }
-  }, [items, isClient]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
-    setItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
+    setItems(currentItems => {
+      const existingItem = currentItems.find(item => item.product.id === product.id);
+      
       if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id
+        return currentItems.map(item =>
+          item.product.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevItems, { ...product, quantity }];
+
+      return [...currentItems, { product, quantity }];
     });
   };
 
   const removeFromCart = (productId: number) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== productId));
+    setItems(currentItems => currentItems.filter(item => item.product.id !== productId));
   };
 
   const updateQuantity = (productId: number, quantity: number) => {
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === productId ? { ...item, quantity } : item
+    if (quantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
+
+    setItems(currentItems =>
+      currentItems.map(item =>
+        item.product.id === productId
+          ? { ...item, quantity }
+          : item
       )
     );
   };
 
-  const getCartTotal = () => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+  const isInCart = (productId: number) => {
+    return items.some(item => item.product.id === productId);
+  };
+
+  const getItemQuantity = (productId: number) => {
+    return items.find(item => item.product.id === productId)?.quantity || 0;
   };
 
   const clearCart = () => {
     setItems([]);
-    if (isClient) {
-      localStorage.removeItem('cart');
-    }
+  };
+
+  const getTotalItems = () => {
+    return items.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const getTotalPrice = () => {
+    return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
   };
 
   return (
-    <CartContext.Provider value={{ 
-      items, 
-      addToCart, 
-      removeFromCart, 
-      updateQuantity, 
-      getCartTotal,
-      clearCart 
-    }}>
+    <CartContext.Provider
+      value={{
+        items,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        isInCart,
+        getItemQuantity,
+        clearCart,
+        getTotalItems,
+        getTotalPrice,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

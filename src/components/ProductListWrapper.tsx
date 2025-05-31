@@ -16,9 +16,11 @@ interface ProductListWrapperProps {
 }
 
 export default function ProductListWrapper({ initialProducts, initialCategories }: ProductListWrapperProps) {
+  const categoryNames = initialCategories.map(category => category.name)
+  
   return (
     <Suspense fallback={<Loading />}>
-      <ProductList initialProducts={initialProducts} initialCategories={initialCategories} />
+      <ProductList initialProducts={initialProducts} categories={categoryNames} />
     </Suspense>
   )
 } 

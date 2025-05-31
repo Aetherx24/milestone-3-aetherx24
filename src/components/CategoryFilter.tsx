@@ -1,63 +1,40 @@
 "use client"
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Category } from '@/types'
+import { useSearchParams } from 'next/navigation'
 
 interface CategoryFilterProps {
-  categories: Category[]
-  onCategorySelect: (categoryId: number | null) => void
+  categories: string[]
 }
 
-export default function CategoryFilter({ categories, onCategorySelect }: CategoryFilterProps) {
-  const router = useRouter();
+export default function CategoryFilter({ categories }: CategoryFilterProps) {
   const searchParams = useSearchParams();
-  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const selectedCategory = searchParams.get('category');
 
-  useEffect(() => {
-    setCurrentCategory(searchParams.get('category'));
-    setIsLoading(false);
-  }, [searchParams]);
-
-  if (isLoading) {
-    return (
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Categories</h2>
-        <div className="flex flex-wrap gap-4">
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              className="px-4 py-2 rounded-full bg-gray-100 animate-pulse"
-            >
-              {category.name}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const handleCategoryChange = (category: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (selectedCategory === category) {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    window.location.search = params.toString();
+  };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Categories</h2>
-      <div className="space-y-2">
+    <div className="space-y-2">
+      {categories.map((category) => (
         <button
-          onClick={() => onCategorySelect(null)}
-          className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+          key={category}
+          onClick={() => handleCategoryChange(category)}
+          className={`px-4 py-2 rounded-full text-sm font-medium ${
+            selectedCategory === category
+              ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+          }`}
         >
-          All Categories
+          {category}
         </button>
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onCategorySelect(category.id)}
-            className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
+      ))}
     </div>
   );
 } 

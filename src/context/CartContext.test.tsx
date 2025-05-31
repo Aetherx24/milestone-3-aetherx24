@@ -10,18 +10,17 @@ const TestComponent = () => {
       <div data-testid="item-count">{items.length}</div>
       <button onClick={() => addToCart({ 
         id: 1, 
-        title: 'Test', 
+        name: 'Test', 
         price: 10, 
         description: 'Test Description',
-        images: [], 
+        images: [''], 
         category: { 
           id: 1, 
           name: 'Test', 
           image: '', 
           slug: 'test' 
-        }, 
-        slug: 'test' 
-      }, 1)}>
+        }
+      })}>
         Add Item
       </button>
       <button onClick={() => removeFromCart(1)}>Remove Item</button>

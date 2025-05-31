@@ -14,17 +14,16 @@ jest.mock('next/image', () => ({
 
 const mockProduct = {
   id: 1,
-  title: 'Test Product',
-  price: 99.99,
+  name: 'Test Product',
   description: 'Test Description',
-  images: ['test-image.jpg'],
+  price: 99.99,
+  images: ['/test-image.jpg'],
   category: {
     id: 1,
     name: 'Test Category',
-    image: 'test-category.jpg',
+    image: '',
     slug: 'test-category'
-  },
-  slug: 'test-product'
+  }
 }
 
 describe('ProductCard', () => {
@@ -38,27 +37,21 @@ describe('ProductCard', () => {
 
   it('renders product information correctly', () => {
     renderProductCard()
-    
-    expect(screen.getByText(mockProduct.title)).toBeInTheDocument()
-    expect(screen.getByText(`$${mockProduct.price}`)).toBeInTheDocument()
-    expect(screen.getByText(mockProduct.category.name)).toBeInTheDocument()
+    expect(screen.getByText(`$${mockProduct.price.toFixed(2)}`)).toBeInTheDocument()
+    expect(screen.getByText('View Details')).toBeInTheDocument()
+    expect(screen.getByText('Add to Cart')).toBeInTheDocument()
   })
 
   it('renders product image with correct alt text', () => {
     renderProductCard()
-    
     const image = screen.getByRole('img')
-    expect(image).toHaveAttribute('src', mockProduct.images[0])
-    expect(image).toHaveAttribute('alt', mockProduct.title)
+    expect(image).toHaveAttribute('alt', `Image of ${mockProduct.name}`)
   })
 
-  it('has working add to cart button', () => {
+  it('adds product to cart when Add to Cart button is clicked', () => {
     renderProductCard()
-    
-    const addToCartButton = screen.getByRole('button', { name: /add to cart/i })
-    expect(addToCartButton).toBeInTheDocument()
-    
+    const addToCartButton = screen.getByText('Add to Cart')
     fireEvent.click(addToCartButton)
-    // You might want to add more assertions here based on your cart implementation
+    expect(screen.getByText('Added (1)')).toBeInTheDocument()
   })
 }) 

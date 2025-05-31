@@ -7,10 +7,14 @@ export interface Category {
 
 export interface Product {
   id: number
-  title: string
-  price: number
+  name: string
   description: string
-  category: Category
+  price: number
   images: string[]
-  slug: string
+  category: {
+    id: number
+    name: string
+    image: string
+    slug: string
+  }
 } 

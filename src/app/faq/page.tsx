@@ -20,12 +20,12 @@ export default function FAQPage() {
   
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Frequently Asked Questions</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">Frequently Asked Questions</h1>
         <div className="space-y-6">
           {faqs.map((faq, index) => (
-            <div key={index} className="border-b pb-4">
-              <h2 className="text-xl font-semibold mb-2">{faq.question}</h2>
-              <p className="text-gray-600">{faq.answer}</p>
+            <div key={index} className="border-b border-gray-600 pb-4">
+              <h2 className="text-xl font-semibold text-white mb-2">{faq.question}</h2>
+              <p className="text-gray-300">{faq.answer}</p>
             </div>
           ))}
         </div>

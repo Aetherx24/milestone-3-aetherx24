@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Category } from '@/types';
 
 interface CategoryFormProps {
   params: {
@@ -22,13 +21,7 @@ export default function CategoryForm({ params }: CategoryFormProps) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (isEditing && params.id) {
-      fetchCategory();
-    }
-  }, [isEditing, params.id]);
-
-  const fetchCategory = async () => {
+  const fetchCategory = useCallback(async () => {
     try {
       const response = await fetch(`/api/categories/${params.id}`);
       const data = await response.json();
@@ -36,7 +29,13 @@ export default function CategoryForm({ params }: CategoryFormProps) {
     } catch (error) {
       console.error('Error fetching category:', error);
     }
-  };
+  }, [params.id]);
+
+  useEffect(() => {
+    if (isEditing && params.id) {
+      fetchCategory();
+    }
+  }, [isEditing, params.id, fetchCategory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -11,14 +11,18 @@ A modern e-commerce platform built with Next.js 13+ and TypeScript, offering a s
 - 🛒 Shopping cart with persistent storage
 - 👤 User authentication and profile management
 - 📱 Responsive design for all devices
+- 🔐 Role-based access control (Admin/User)
+- 📦 Order management system
 
 ### Technical Features
 - ⚡ Server-side rendering for optimal performance
 - 🔄 Real-time cart updates
 - 🎨 Modern UI with Tailwind CSS
 - 📦 Optimized image loading
-- 🔒 Secure authentication
-- 🧪 Comprehensive test coverage
+- 🔒 Secure authentication with NextAuth.js
+- 🧪 Comprehensive test coverage with Jest & RTL
+- 🔄 API route handlers for data operations
+- 📱 Mobile-first responsive design
 
 ## 🛠️ Tech Stack
 
@@ -29,12 +33,17 @@ A modern e-commerce platform built with Next.js 13+ and TypeScript, offering a s
 - **Testing:** Jest & React Testing Library
 - **API:** FakeStore API
 - **Authentication:** NextAuth.js
+- **Database:** (Add your database solution)
+- **Deployment:** Vercel
 
 ## 🏗️ Project Structure
 
 ```
 src/
 ├── app/                 # Next.js app directory
+│   ├── api/            # API route handlers
+│   ├── admin/          # Admin dashboard pages
+│   └── products/       # Product-related pages
 ├── components/         # Reusable UI components
 ├── context/           # React context providers
 ├── hooks/             # Custom React hooks
@@ -48,6 +57,7 @@ src/
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
+- Git
 
 ### Installation
 
@@ -84,9 +94,14 @@ yarn dev
 
 Run the test suite:
 ```bash
+# Run all tests
 npm test
-# or
-yarn test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
 ```
 
 ## 📦 Build
@@ -102,6 +117,12 @@ yarn build
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
+### Deployment Steps:
+1. Push your code to GitHub
+2. Import your repository to Vercel
+3. Configure environment variables
+4. Deploy!
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -109,3 +130,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👥 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Contributing Guidelines:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+For support, email support@revoshop.com or open an issue in the repository.

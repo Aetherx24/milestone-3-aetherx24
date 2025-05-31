@@ -2,17 +2,17 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import ProductCard from '@/components/ProductCard'
 import { CartProvider } from '@/context/CartContext'
 import '@testing-library/jest-dom'
+import { Product } from '@/types'
 
 // Mock next/image
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => {
-    // eslint-disable-next-line jsx-a11y/alt-text
-    return <img {...props} />
+  default: (props: { src: string; alt: string }) => {
+    return <img src={props.src} alt={props.alt} />
   },
 }))
 
-const mockProduct = {
+const mockProduct: Product = {
   id: 1,
   name: 'Test Product',
   description: 'Test Description',
@@ -21,23 +21,28 @@ const mockProduct = {
   category: {
     id: 1,
     name: 'Test Category',
-    image: '',
+    image: '/test-category.jpg',
     slug: 'test-category'
   }
 }
 
 describe('ProductCard', () => {
+  const mockOnAddToCart = jest.fn();
+
   const renderProductCard = () => {
     return render(
       <CartProvider>
-        <ProductCard product={mockProduct} />
+        <ProductCard 
+          product={mockProduct} 
+          onAddToCart={mockOnAddToCart}
+        />
       </CartProvider>
     )
   }
 
   it('renders product information correctly', () => {
     renderProductCard()
-    expect(screen.getByText(`$${mockProduct.price.toFixed(2)}`)).toBeInTheDocument()
+    expect(screen.getByText('$99.99')).toBeInTheDocument()
     expect(screen.getByText('View Details')).toBeInTheDocument()
     expect(screen.getByText('Add to Cart')).toBeInTheDocument()
   })
@@ -45,13 +50,13 @@ describe('ProductCard', () => {
   it('renders product image with correct alt text', () => {
     renderProductCard()
     const image = screen.getByRole('img')
-    expect(image).toHaveAttribute('alt', `Image of ${mockProduct.name}`)
+    expect(image).toHaveAttribute('alt', 'Image of Test Product')
   })
 
-  it('adds product to cart when Add to Cart button is clicked', () => {
+  it('calls onAddToCart when Add to Cart button is clicked', () => {
     renderProductCard()
     const addToCartButton = screen.getByText('Add to Cart')
     fireEvent.click(addToCartButton)
-    expect(screen.getByText('Added (1)')).toBeInTheDocument()
+    expect(mockOnAddToCart).toHaveBeenCalled()
   })
 }) 

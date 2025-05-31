@@ -9,6 +9,7 @@ interface CategoryFormProps {
     action: string;
     id?: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export default function CategoryForm({ params }: CategoryFormProps) {

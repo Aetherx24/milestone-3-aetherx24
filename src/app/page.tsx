@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import { Product } from '@/types';
 import ProductCard from '@/components/ProductCard';
+import { useCart } from '@/context/CartContext';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -58,7 +60,11 @@ export default function Home() {
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard 
+            key={product.id} 
+            product={product} 
+            onAddToCart={() => addToCart(product)}
+          />
         ))}
       </div>
     </div>

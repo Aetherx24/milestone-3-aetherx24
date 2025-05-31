@@ -8,20 +8,21 @@ import { useState } from 'react'
 
 interface ProductCardProps {
     product: Product;
+    onAddToCart: () => void;
 }
 
 const DEFAULT_IMAGE = 'https://placehold.co/400x400?text=No+Image';
 
-export default function ProductCard({ product }: ProductCardProps) {
-    const { addToCart, isInCart, getItemQuantity } = useCart();
+export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
+    const { isInCart, getItemQuantity } = useCart();
     const { id, name, price, images } = product;
     const imageUrl = images?.[0] || DEFAULT_IMAGE;
     const altText = name ? `Image of ${name}` : 'Product image';
     const [quantity, setQuantity] = useState(1);
 
     const handleAddToCart = () => {
-        addToCart(product, quantity);
-        setQuantity(1); // Reset quantity after adding to cart
+        onAddToCart();
+        setQuantity(1);
     };
 
     return (

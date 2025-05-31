@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Product } from '@/types'
 import ProductCard from './ProductCard'
 import CategoryFilter from './CategoryFilter'
+import { useCart } from '@/context/CartContext'
 
 interface ProductListProps {
   initialProducts: Product[]
@@ -17,13 +18,22 @@ function ProductListClient({ initialProducts, categories }: ProductListProps) {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>(initialProducts || []);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     if (initialProducts.length === 0) {
-      fetch('/api/products')
-        .then((res) => res.json())
-        .then((data) => setProducts(data))
-        .catch((err) => setError('Failed to load products'));
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch('/api/products');
+          const data = await response.json();
+          setProducts(data);
+        } catch (error) {
+          console.error('Error fetching products:', error);
+          setError('Failed to load products');
+        }
+      };
+
+      fetchProducts();
     }
   }, [initialProducts]);
 
@@ -44,7 +54,11 @@ function ProductListClient({ initialProducts, categories }: ProductListProps) {
         <div className="md:col-span-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={() => addToCart(product)}
+              />
             ))}
           </div>
         </div>

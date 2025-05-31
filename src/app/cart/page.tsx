@@ -1,7 +1,7 @@
 "use client"
 
 import { useCart } from '@/context/CartContext';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import CartItem from '@/components/CartItem';

@@ -10,7 +10,7 @@ const TestComponent = () => {
       <div data-testid="item-count">{items.length}</div>
       <button onClick={() => addToCart({ 
         id: 1, 
-        title: 'Test', 
+        name: 'Test', 
         price: 10, 
         description: 'Test Description',
         images: [], 
@@ -20,7 +20,6 @@ const TestComponent = () => {
           image: '', 
           slug: 'test' 
         }, 
-        slug: 'test' 
       }, 1)}>
         Add Item
       </button>

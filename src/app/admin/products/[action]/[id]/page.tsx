@@ -1,9 +1,13 @@
 import { ProductFormClient } from './ProductFormClient';
 
 interface PageProps {
-  params: { action: string; id: string };
+  params: Promise<{
+    action: string;
+    id: string;
+  }>;
 }
 
-export default function ProductForm({ params }: PageProps) {
-  return <ProductFormClient params={params} />;
+export default async function ProductForm({ params }: PageProps) {
+  const resolvedParams = await params;
+  return <ProductFormClient params={resolvedParams} />;
 } 

@@ -3,9 +3,13 @@ import { revalidatePath } from 'next/cache';
 
 const API_URL = 'https://api.escuelajs.co/api/v1';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const response = await fetch(`${API_URL}/products`);
+    const { searchParams } = new URL(request.url);
+    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = parseInt(searchParams.get('limit') || '10');
+
+    const response = await fetch(`${API_URL}/products?offset=${offset}&limit=${limit}`);
     if (!response.ok) {
       throw new Error('Failed to fetch products');
     }

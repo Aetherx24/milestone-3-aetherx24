@@ -22,7 +22,7 @@ export default function Cart() {
         <div key={item.product.id} className="flex items-center gap-4 p-4 bg-white rounded-lg shadow">
           <div className="relative w-20 h-20">
             <Image
-              src={item.product.image}
+              src={item.product.images[0]}
               alt={item.product.name}
               fill
               className="object-cover rounded"

@@ -1,8 +1,10 @@
 import ProductsWrapper from '@/components/ProductsWrapper'
 
+export const dynamic = 'force-dynamic';
+
 async function getProducts() {
   try {
-    const res = await fetch('https://api.escuelajs.co/api/v1/products', { cache: 'no-store' })
+    const res = await fetch('https://api.escuelajs.co/api/v1/products')
     if (!res.ok) throw new Error('Failed to fetch products')
     return res.json()
   } catch (error) {
@@ -13,7 +15,7 @@ async function getProducts() {
 
 async function getCategories() {
   try {
-    const res = await fetch('https://api.escuelajs.co/api/v1/categories', { cache: 'no-store' })
+    const res = await fetch('https://api.escuelajs.co/api/v1/categories')
     if (!res.ok) throw new Error('Failed to fetch categories')
     return res.json()
   } catch (error) {

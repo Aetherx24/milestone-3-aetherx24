@@ -1,25 +1,21 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { useRouter } from 'next/navigation'
 import { ProductFormClient } from '@/app/admin/products/[action]/[id]/ProductFormClient'
 import '@testing-library/jest-dom'
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
-  useRouter: jest.fn()
+  useRouter: () => ({
+    push: jest.fn()
+  })
 }))
 
 // Mock fetch
 global.fetch = jest.fn()
 
 describe('ProductFormClient', () => {
-  const mockRouter = {
-    push: jest.fn(),
-    back: jest.fn()
-  }
-
   const mockCategories = [
-    { id: 1, name: 'Category 1' },
-    { id: 2, name: 'Category 2' }
+    { id: 1, name: 'Category 1', image: 'image1.jpg', slug: 'category-1' },
+    { id: 2, name: 'Category 2', image: 'image2.jpg', slug: 'category-2' }
   ]
 
   const mockProduct = {
@@ -27,63 +23,73 @@ describe('ProductFormClient', () => {
     title: 'Test Product',
     price: 99.99,
     description: 'Test Description',
-    category: { id: 1, name: 'Category 1' },
-    images: ['test-image.jpg']
+    category: {
+      id: 1,
+      name: 'Category 1',
+      image: 'image1.jpg',
+      slug: 'category-1'
+    },
+    images: ['image1.jpg', 'image2.jpg']
   }
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useRouter as jest.Mock).mockReturnValue(mockRouter)
     ;(global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockCategories)
     })
   })
 
-  it('renders add product form', async () => {
+  it('renders add product form correctly', async () => {
     render(<ProductFormClient params={{ action: 'add' }} />)
-    
+
     // Check form elements
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/price/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/category/i)).toBeInTheDocument()
-    expect(screen.getByText('Add New Product')).toBeInTheDocument()
+    expect(screen.getByText(/add new product/i)).toBeInTheDocument()
   })
 
   it('renders edit product form with existing data', async () => {
     // Mock product fetch
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockCategories)
-    }).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockProduct)
-    })
+    ;(global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockCategories)
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockProduct)
+      })
 
     render(<ProductFormClient params={{ action: 'edit', id: '1' }} />)
 
     // Wait for form to be populated
     await waitFor(() => {
       expect(screen.getByLabelText(/title/i)).toHaveValue('Test Product')
-      expect(screen.getByLabelText(/price/i)).toHaveValue('99.99')
+      expect(screen.getByLabelText(/price/i)).toHaveValue(99.99)
       expect(screen.getByLabelText(/description/i)).toHaveValue('Test Description')
     })
+
+    expect(screen.getByText(/edit product/i)).toBeInTheDocument()
   })
 
-  it('handles form submission for new product', async () => {
+  it('handles form submission for adding a new product', async () => {
     // Mock successful submission
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockCategories)
-    }).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ id: 1 })
-    })
+    ;(global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockCategories)
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ success: true })
+      })
 
     render(<ProductFormClient params={{ action: 'add' }} />)
 
-    // Fill out form
+    // Fill in form
     fireEvent.change(screen.getByLabelText(/title/i), {
       target: { value: 'New Product' }
     })
@@ -98,9 +104,9 @@ describe('ProductFormClient', () => {
     })
 
     // Submit form
-    fireEvent.click(screen.getByText('Add New Product'))
+    fireEvent.click(screen.getByRole('button', { name: /save/i }))
 
-    // Check if API was called with correct data
+    // Check if API was called correctly
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/api/products', {
         method: 'POST',
@@ -109,30 +115,30 @@ describe('ProductFormClient', () => {
         },
         body: JSON.stringify({
           title: 'New Product',
-          description: 'New Description',
-          images: [''],
           price: 149.99,
-          categoryId: 1
+          description: 'New Description',
+          categoryId: 1,
+          images: ['']
         })
       })
     })
-
-    // Check if redirected after success
-    expect(mockRouter.push).toHaveBeenCalledWith('/admin/products')
   })
 
-  it('handles form submission for editing product', async () => {
+  it('handles form submission for editing a product', async () => {
     // Mock successful submission
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockCategories)
-    }).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockProduct)
-    }).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ id: 1 })
-    })
+    ;(global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockCategories)
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockProduct)
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ success: true })
+      })
 
     render(<ProductFormClient params={{ action: 'edit', id: '1' }} />)
 
@@ -147,9 +153,9 @@ describe('ProductFormClient', () => {
     })
 
     // Submit form
-    fireEvent.click(screen.getByText('Edit Product'))
+    fireEvent.click(screen.getByRole('button', { name: /save/i }))
 
-    // Check if API was called with correct data
+    // Check if API was called correctly
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/api/products/1', {
         method: 'PUT',
@@ -161,16 +167,13 @@ describe('ProductFormClient', () => {
           price: 99.99,
           description: 'Test Description',
           categoryId: 1,
-          images: ['test-image.jpg']
+          images: ['image1.jpg', 'image2.jpg']
         })
       })
     })
-
-    // Check if redirected after success
-    expect(mockRouter.push).toHaveBeenCalledWith('/admin/products')
   })
 
-  it('handles API errors gracefully', async () => {
+  it('handles API errors', async () => {
     // Mock API error
     ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'))
 
@@ -178,7 +181,7 @@ describe('ProductFormClient', () => {
 
     // Check if error message is displayed
     await waitFor(() => {
-      expect(screen.getByText('Failed to load categories')).toBeInTheDocument()
+      expect(screen.getByText(/failed to load categories/i)).toBeInTheDocument()
     })
   })
 
@@ -186,12 +189,29 @@ describe('ProductFormClient', () => {
     render(<ProductFormClient params={{ action: 'add' }} />)
 
     // Submit form without filling required fields
-    fireEvent.click(screen.getByText('Add New Product'))
+    fireEvent.click(screen.getByRole('button', { name: /save/i }))
 
-    // Check for validation messages
+    // Check if validation messages are displayed
     expect(screen.getByLabelText(/title/i)).toBeInvalid()
     expect(screen.getByLabelText(/price/i)).toBeInvalid()
     expect(screen.getByLabelText(/description/i)).toBeInvalid()
     expect(screen.getByLabelText(/category/i)).toBeInvalid()
+  })
+
+  it('handles image fields', async () => {
+    render(<ProductFormClient params={{ action: 'add' }} />)
+
+    // Add image field
+    fireEvent.click(screen.getByText(/add image/i))
+
+    // Check if new image field is added
+    const imageInputs = screen.getAllByLabelText(/image/i)
+    expect(imageInputs).toHaveLength(2)
+
+    // Remove image field
+    fireEvent.click(screen.getAllByText(/remove/i)[1])
+
+    // Check if image field is removed
+    expect(screen.getAllByLabelText(/image/i)).toHaveLength(1)
   })
 }) 

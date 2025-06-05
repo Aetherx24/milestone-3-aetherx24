@@ -16,6 +16,7 @@ interface ProductsWrapperProps {
   initialCategories: Category[]
   currentPage: number
   itemsPerPage: number
+  showCategories?: boolean
 }
 
 export default function ProductsWrapper({ 
@@ -23,6 +24,7 @@ export default function ProductsWrapper({
   initialCategories,
   currentPage,
   itemsPerPage,
+  showCategories = true,
 }: ProductsWrapperProps) {
   console.log('ProductsWrapper received products:', initialProducts); // Debug log
   console.log('ProductsWrapper received categories:', initialCategories); // Debug log
@@ -52,6 +54,7 @@ export default function ProductsWrapper({
         categories={categoryNames}
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
+        showCategories={showCategories}
       />
     </Suspense>
   )

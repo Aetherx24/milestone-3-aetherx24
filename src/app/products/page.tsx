@@ -20,6 +20,12 @@ export default async function ProductsPage() {
     getCategories()
   ]);
 
+  // Map title to name for each product
+  const productsWithName = initialProducts.map((product: any) => ({
+    ...product,
+    name: product.title,
+  }));
+
   const categoryNames = categories.map((category: Category) => category.name);
 
   return (
@@ -27,7 +33,7 @@ export default async function ProductsPage() {
       <h1 className="text-3xl font-bold mb-8">Products</h1>
       <Suspense fallback={<Loading />}>
         <ProductList
-          initialProducts={initialProducts}
+          initialProducts={productsWithName}
           categories={categoryNames}
           currentPage={1}
           itemsPerPage={12}

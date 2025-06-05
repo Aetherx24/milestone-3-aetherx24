@@ -10,6 +10,7 @@ interface ProductListProps {
   categories: string[]
   currentPage: number
   itemsPerPage: number
+  showCategories?: boolean
 }
 
 export default function ProductList({
@@ -17,6 +18,7 @@ export default function ProductList({
   categories,
   currentPage,
   itemsPerPage,
+  showCategories = true,
 }: ProductListProps) {
   console.log('ProductList received products:', initialProducts)
   console.log('ProductList received categories:', categories)
@@ -69,7 +71,7 @@ export default function ProductList({
 
   return (
     <div className="space-y-8">
-      {categories.length > 0 && (
+      {showCategories && categories.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <button

@@ -29,7 +29,7 @@ export default function CategoryFilter({ categories }: CategoryFilterProps) {
           className={`px-4 py-2 rounded-full text-sm font-medium ${
             selectedCategory === category
               ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+              : 'bg-gray-100 text-black hover:bg-gray-200'
           }`}
         >
           {category}

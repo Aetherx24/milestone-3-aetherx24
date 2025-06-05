@@ -13,14 +13,26 @@ const ProductList = dynamic(() => import('@/components/ProductList'), {
 interface ProductListWrapperProps {
   initialProducts: Product[]
   initialCategories: Category[]
+  currentPage: number
+  itemsPerPage: number
 }
 
-export default function ProductListWrapper({ initialProducts, initialCategories }: ProductListWrapperProps) {
+export default function ProductListWrapper({ 
+  initialProducts, 
+  initialCategories,
+  currentPage,
+  itemsPerPage 
+}: ProductListWrapperProps) {
   const categoryNames = initialCategories.map(category => category.name)
   
   return (
     <Suspense fallback={<Loading />}>
-      <ProductList initialProducts={initialProducts} categories={categoryNames} />
+      <ProductList 
+        initialProducts={initialProducts} 
+        categories={categoryNames}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+      />
     </Suspense>
   )
 } 

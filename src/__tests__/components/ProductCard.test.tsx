@@ -3,6 +3,7 @@ import ProductCard from '@/components/ProductCard'
 import { CartProvider } from '@/context/CartContext'
 import '@testing-library/jest-dom'
 import { Product } from '@/types'
+import { ReactNode } from 'react'
 
 // Mock next/image
 jest.mock('next/image', () => ({
@@ -12,51 +13,101 @@ jest.mock('next/image', () => ({
   },
 }))
 
+// Mock CartContext
+jest.mock('@/context/CartContext', () => ({
+  useCart: () => ({
+    addToCart: jest.fn(),
+    cart: [],
+    removeFromCart: jest.fn(),
+    updateQuantity: jest.fn(),
+    clearCart: jest.fn(),
+    getItemQuantity: jest.fn(),
+    isInCart: jest.fn()
+  }),
+  CartProvider: ({ children }: { children: ReactNode }) => <>{children}</>
+}))
+
 const mockProduct: Product = {
   id: 1,
   name: 'Test Product',
-  description: 'Test Description',
   price: 99.99,
-  images: ['/test-image.jpg'],
+  description: 'Test Description',
+  images: ['https://example.com/image.jpg'],
   category: {
     id: 1,
     name: 'Test Category',
-    image: '/test-category.jpg',
+    image: 'https://example.com/category.jpg',
     slug: 'test-category'
   }
 }
 
+interface TestWrapperProps {
+  children: ReactNode;
+  mockAddToCart?: jest.Mock;
+}
+
+// Custom wrapper component for testing
+const TestWrapper = ({ children, mockAddToCart = jest.fn() }: TestWrapperProps) => {
+  const mockCartContext = {
+    addToCart: mockAddToCart,
+    cart: [],
+    removeFromCart: jest.fn(),
+    updateQuantity: jest.fn(),
+    clearCart: jest.fn(),
+    getItemQuantity: jest.fn(),
+    isInCart: jest.fn()
+  };
+
+  return (
+    <CartProvider>
+      {children}
+    </CartProvider>
+  );
+};
+
 describe('ProductCard', () => {
-  const mockOnAddToCart = jest.fn();
-
-  const renderProductCard = () => {
-    return render(
-      <CartProvider>
-        <ProductCard 
-          product={mockProduct} 
-          onAddToCart={mockOnAddToCart}
-        />
-      </CartProvider>
-    )
-  }
-
   it('renders product information correctly', () => {
-    renderProductCard()
-    expect(screen.getByText('$99.99')).toBeInTheDocument()
-    expect(screen.getByText('View Details')).toBeInTheDocument()
-    expect(screen.getByText('Add to Cart')).toBeInTheDocument()
-  })
+    render(
+      <CartProvider>
+        <ProductCard product={mockProduct} />
+      </CartProvider>
+    );
+
+    expect(screen.getByText('$99.99')).toBeInTheDocument();
+    expect(screen.getByText('View Details')).toBeInTheDocument();
+    expect(screen.getByText('Add to Cart')).toBeInTheDocument();
+  });
 
   it('renders product image with correct alt text', () => {
-    renderProductCard()
+    render(
+      <CartProvider>
+        <ProductCard product={mockProduct} />
+      </CartProvider>
+    );
     const image = screen.getByRole('img')
     expect(image).toHaveAttribute('alt', 'Image of Test Product')
-  })
+  });
 
-  it('calls onAddToCart when Add to Cart button is clicked', () => {
-    renderProductCard()
-    const addToCartButton = screen.getByText('Add to Cart')
-    fireEvent.click(addToCartButton)
-    expect(mockOnAddToCart).toHaveBeenCalled()
-  })
+  it('calls addToCart when Add to Cart button is clicked', () => {
+    const mockAddToCart = jest.fn();
+    jest.spyOn(require('@/context/CartContext'), 'useCart').mockReturnValue({
+      addToCart: mockAddToCart,
+      cart: [],
+      removeFromCart: jest.fn(),
+      updateQuantity: jest.fn(),
+      clearCart: jest.fn(),
+      getItemQuantity: jest.fn(),
+      isInCart: jest.fn()
+    });
+
+    render(
+      <CartProvider>
+        <ProductCard product={mockProduct} />
+      </CartProvider>
+    );
+
+    const addToCartButton = screen.getByText('Add to Cart');
+    fireEvent.click(addToCartButton);
+    expect(mockAddToCart).toHaveBeenCalledWith(mockProduct);
+  });
 }) 

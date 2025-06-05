@@ -91,7 +91,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         getItemQuantity,
         clearCart,
         getTotalItems,
-        getTotalPrice,
+        getTotalPrice
       }}
     >
       {children}

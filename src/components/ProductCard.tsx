@@ -2,41 +2,20 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Product } from '@/types'
 import { useCart } from '@/context/CartContext'
-import { useState, useEffect } from 'react'
+import type { Product } from '@/types'
 
 interface ProductCardProps {
     product: Product;
-    onAddToCart: () => void;
 }
 
 const DEFAULT_IMAGE = 'https://placehold.co/400x400?text=No+Image';
 
-export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
-    const { isInCart, getItemQuantity } = useCart();
+export default function ProductCard({ product }: ProductCardProps) {
+    const { addToCart } = useCart();
     const { id, name, price, images } = product;
     const imageUrl = images?.[0] || DEFAULT_IMAGE;
     const altText = name ? `Image of ${name}` : 'Product image';
-    const [quantity, setQuantity] = useState(1);
-    const [isMounted, setIsMounted] = useState(false);
-
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
-    const handleAddToCart = () => {
-        onAddToCart();
-        setQuantity(1);
-    };
-
-    const cartButtonContent = isMounted
-        ? (isInCart(id) ? `Added (${getItemQuantity(id)})` : 'Add to Cart')
-        : 'Add to Cart';
-
-    const cartButtonClass = isMounted && isInCart(id)
-        ? 'bg-green-100 text-green-800'
-        : 'bg-indigo-600 text-white hover:bg-indigo-700';
 
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -55,22 +34,6 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
             <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
                     <span className="text-lg font-bold text-gray-900">${price.toFixed(2)}</span>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                            className="px-2 py-1 text-gray-600 hover:text-gray-800"
-                            disabled={quantity <= 1}
-                        >
-                            -
-                        </button>
-                        <span className="w-8 text-center text-gray-900 font-medium">{quantity}</span>
-                        <button
-                            onClick={() => setQuantity(prev => prev + 1)}
-                            className="px-2 py-1 text-gray-600 hover:text-gray-800"
-                        >
-                            +
-                        </button>
-                    </div>
                 </div>
                 <div className="flex gap-2">
                     <Link
@@ -80,10 +43,10 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
                         View Details
                     </Link>
                     <button
-                        onClick={handleAddToCart}
-                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium ${cartButtonClass}`}
+                        onClick={() => addToCart(product)}
+                        className="flex-1 py-2 px-4 rounded-md text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700"
                     >
-                        {cartButtonContent}
+                        Add to Cart
                     </button>
                 </div>
             </div>

@@ -32,6 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
             </Link>
             <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{name}</h3>
                 <div className="flex items-center justify-between mb-4">
                     <span className="text-lg font-bold text-gray-900">${price.toFixed(2)}</span>
                 </div>

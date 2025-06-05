@@ -3,8 +3,13 @@ import Image from 'next/image';
 import { Product } from '@/types/product';
 import AddToCartButton from '@/components/AddToCartButton';
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product: Product = await getProductById(params.id);
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ProductPage({ params }: PageProps) {
+  const { id } = await params;
+  const product: Product = await getProductById(id);
 
   return (
     <div className="container mx-auto px-4 py-8">

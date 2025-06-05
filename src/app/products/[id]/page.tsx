@@ -6,7 +6,11 @@ import { useCart } from '@/context/CartContext';
 import { Product } from '@/types';
 import Link from 'next/link';
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function ProductDetail({ params }: PageProps) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +19,8 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${params.id}`);
+        const { id } = await params;
+        const response = await fetch(`/api/products/${id}`);
         if (!response.ok) {
           throw new Error('Product not found');
         }
@@ -29,7 +34,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     };
 
     fetchProduct();
-  }, [params.id]);
+  }, [params]);
 
   if (loading) {
     return (

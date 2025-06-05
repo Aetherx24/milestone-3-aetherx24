@@ -38,6 +38,11 @@ export default function ProductList({
     }
   }, [searchParams, initialProducts])
 
+  // Client-side filtering by category
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.category?.name === selectedCategory)
+    : products
+
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', newPage.toString())
@@ -61,7 +66,7 @@ export default function ProductList({
     )
   }
 
-  if (!products || products.length === 0) {
+  if (!filteredProducts || filteredProducts.length === 0) {
     return (
       <div className="text-center py-8">
         <p className="text-gray-600">No products found</p>
@@ -100,12 +105,12 @@ export default function ProductList({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
-      {products.length > 0 && (
+      {filteredProducts.length > 0 && (
         <div className="flex justify-center items-center space-x-4 mt-8">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -117,7 +122,7 @@ export default function ProductList({
           <span className="text-gray-600">Page {currentPage}</span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={products.length < itemsPerPage}
+            disabled={filteredProducts.length < itemsPerPage}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next

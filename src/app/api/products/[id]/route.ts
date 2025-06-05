@@ -5,10 +5,11 @@ const API_URL = 'https://api.escuelajs.co/api/v1';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   try {
-    const response = await fetch(`${API_URL}/products/${params.id}`);
+    const response = await fetch(`${API_URL}/products/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch product');
     }
@@ -25,11 +26,12 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   try {
     const body = await request.json();
-    const response = await fetch(`${API_URL}/products/${params.id}`, {
+    const response = await fetch(`${API_URL}/products/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +46,7 @@ export async function PUT(
     const product = await response.json();
     revalidatePath('/products');
     revalidatePath('/admin');
-    revalidatePath(`/products/${params.id}`);
+    revalidatePath(`/products/${id}`);
     return NextResponse.json(product);
   } catch (error) {
     console.error('Error updating product:', error);
@@ -57,10 +59,11 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   try {
-    const response = await fetch(`${API_URL}/products/${params.id}`, {
+    const response = await fetch(`${API_URL}/products/${id}`, {
       method: 'DELETE',
     });
 

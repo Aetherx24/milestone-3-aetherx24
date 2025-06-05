@@ -8,10 +8,9 @@ interface CategoryFormProps {
     action: string;
     id?: string;
   };
-  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function CategoryForm({ params }: CategoryFormProps) {
+function CategoryFormClient({ params }: CategoryFormProps) {
   const router = useRouter();
   const isEditing = params.action === 'edit';
   const [formData, setFormData] = useState({
@@ -71,7 +70,6 @@ export default function CategoryForm({ params }: CategoryFormProps) {
     setFormData(prev => ({
       ...prev,
       [name]: value,
-      // Auto-generate slug from name if it's the name field
       ...(name === 'name' && { slug: value.toLowerCase().replace(/\s+/g, '-') }),
     }));
   };
@@ -148,4 +146,8 @@ export default function CategoryForm({ params }: CategoryFormProps) {
       </form>
     </div>
   );
+}
+
+export default function CategoryForm({ params }: CategoryFormProps) {
+  return <CategoryFormClient params={params} />;
 } 

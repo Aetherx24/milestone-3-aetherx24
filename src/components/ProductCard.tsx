@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '@/types'
 import { useCart } from '@/context/CartContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ProductCardProps {
     product: Product;
@@ -19,11 +19,24 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     const imageUrl = images?.[0] || DEFAULT_IMAGE;
     const altText = name ? `Image of ${name}` : 'Product image';
     const [quantity, setQuantity] = useState(1);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const handleAddToCart = () => {
         onAddToCart();
         setQuantity(1);
     };
+
+    const cartButtonContent = isMounted
+        ? (isInCart(id) ? `Added (${getItemQuantity(id)})` : 'Add to Cart')
+        : 'Add to Cart';
+
+    const cartButtonClass = isMounted && isInCart(id)
+        ? 'bg-green-100 text-green-800'
+        : 'bg-indigo-600 text-white hover:bg-indigo-700';
 
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -68,13 +81,9 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
                     </Link>
                     <button
                         onClick={handleAddToCart}
-                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium ${
-                            isInCart(id)
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                        }`}
+                        className={`flex-1 py-2 px-4 rounded-md text-sm font-medium ${cartButtonClass}`}
                     >
-                        {isInCart(id) ? `Added (${getItemQuantity(id)})` : 'Add to Cart'}
+                        {cartButtonContent}
                     </button>
                 </div>
             </div>

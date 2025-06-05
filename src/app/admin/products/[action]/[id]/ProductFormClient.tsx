@@ -23,6 +23,7 @@ export function ProductFormClient({ params }: ProductFormProps) {
   });
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchProduct = useCallback(async () => {
     try {
@@ -43,10 +44,15 @@ export function ProductFormClient({ params }: ProductFormProps) {
   const fetchCategories = async () => {
     try {
       const response = await fetch('/api/categories');
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
       const data = await response.json();
+      console.log('Fetched categories:', data); // Debug log
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      setError('Failed to load categories');
     }
   };
 
@@ -129,6 +135,12 @@ export function ProductFormClient({ params }: ProductFormProps) {
             {isEditing ? 'Edit Product' : 'Add New Product'}
           </h1>
 
+          {error && (
+            <div className="mb-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -192,11 +204,15 @@ export function ProductFormClient({ params }: ProductFormProps) {
                 className="w-full rounded-lg bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               >
                 <option value="">Select a category</option>
-                {categories.map((category: any) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
+                {categories && categories.length > 0 ? (
+                  categories.map((category: any) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>Loading categories...</option>
+                )}
               </select>
             </div>
 

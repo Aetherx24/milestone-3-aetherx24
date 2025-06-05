@@ -1,12 +1,13 @@
 import { CategoryFormClient } from './CategoryFormClient';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     action: string;
     id?: string;
-  };
+  }>;
 }
 
-export default function CategoryForm({ params }: PageProps) {
-  return <CategoryFormClient params={params} />;
+export default async function CategoryForm({ params }: PageProps) {
+  const resolvedParams = await params;
+  return <CategoryFormClient params={resolvedParams} />;
 } 

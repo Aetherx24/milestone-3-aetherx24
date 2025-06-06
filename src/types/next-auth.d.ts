@@ -1,6 +1,12 @@
 import 'next-auth';
 import { DefaultSession } from 'next-auth';
 
+// access token data through session.user on the client side 
+const { data: session } = useSession(); 
+
+// access token data through session user on the server side 
+const session = await getServerSession(authOptions);
+
 declare module 'next-auth' {
   interface Session {
     user: {

@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import useSWR from 'swr';
 
 interface Product {
   id: number;
@@ -15,31 +16,13 @@ interface Product {
   images: string[];
 }
 
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 export default function AdminDashboard() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        console.log('Fetching products...');
-        const response = await fetch('/api/products');
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        setProducts(data);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Error loading products');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  const { data: products, error, mutate } = useSWR<Product[]>('/api/products', fetcher, {
+    refreshInterval: 30000, // Refresh every 30 seconds
+    revalidateOnFocus: true,
+  });
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this product?')) {
@@ -55,14 +38,15 @@ export default function AdminDashboard() {
         throw new Error('Failed to delete product');
       }
 
-      setProducts(products.filter(product => product.id !== id));
+      // Revalidate the data after deletion
+      mutate();
     } catch (err) {
       console.error('Error deleting product:', err);
-      setError('Error deleting product');
+      alert('Error deleting product');
     }
   };
 
-  if (loading) {
+  if (!products && !error) {
     return (
       <div className="min-h-screen bg-gray-100 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,7 +68,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gray-100 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            {error}
+            Error loading products
           </div>
         </div>
       </div>
@@ -106,7 +90,7 @@ export default function AdminDashboard() {
 
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
-            {products.map((product) => (
+            {products?.map((product) => (
               <li key={product.id}>
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">

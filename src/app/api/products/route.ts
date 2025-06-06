@@ -3,16 +3,18 @@ import { revalidatePath } from 'next/cache';
 
 const API_URL = 'https://api.escuelajs.co/api/v1';
 
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const offset = parseInt(searchParams.get('offset') || '0');
-    const limit = parseInt(searchParams.get('limit') || '10');
+export const revalidate = 30; // Revalidate every 30 seconds
 
-    const response = await fetch(`${API_URL}/products?offset=${offset}&limit=${limit}`);
+export async function GET() {
+  try {
+    const response = await fetch(`${API_URL}/products`, {
+      next: { revalidate: 30 } // ISR: revalidate every 30 seconds
+    });
+    
     if (!response.ok) {
       throw new Error('Failed to fetch products');
     }
+
     const products = await response.json();
     return NextResponse.json(products);
   } catch (error) {

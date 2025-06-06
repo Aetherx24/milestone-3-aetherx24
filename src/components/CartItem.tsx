@@ -14,7 +14,7 @@ const DEFAULT_IMAGE = 'https://placehold.co/400x400?text=No+Image';
 export default function CartItem({ product, quantity }: CartItemProps) {
   const { removeFromCart, updateQuantity } = useCart();
   const imageUrl = product.images?.[0] || DEFAULT_IMAGE;
-  const altText = product.name ? `Image of ${product.name}` : 'Product image';
+  const altText = product.title ? `Image of ${product.title}` : 'Product image';
 
   return (
     <div className="flex items-center gap-4 py-4 border-b">
@@ -29,7 +29,7 @@ export default function CartItem({ product, quantity }: CartItemProps) {
         />
       </div>
       <div className="flex-grow">
-        <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{product.title}</h3>
         <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
         <div className="mt-2 flex items-center justify-between">
           <div className="flex items-center gap-2">

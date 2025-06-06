@@ -130,13 +130,13 @@ export default function AdminProductsPage() {
                         <div className="flex-shrink-0 h-10 w-10 relative">
                           <img
                             src={product.images[0]}
-                            alt={product.name}
+                            alt={product.title}
                             className="h-10 w-10 rounded-full object-cover"
                           />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-white">
-                            {product.name}
+                            {product.title}
                           </div>
                           <div className="text-sm text-gray-400">
                             {product.description.substring(0, 50)}...

@@ -51,7 +51,7 @@ export default function CheckoutPage() {
             {items.map(item => (
               <div key={item.product.id} className="flex justify-between items-center">
                 <div>
-                  <h3 className="font-medium">{item.product.name}</h3>
+                  <h3 className="font-medium">{item.product.title}</h3>
                   <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                 </div>
                 <p className="font-medium">${(item.product.price * item.quantity).toFixed(2)}</p>

@@ -13,9 +13,9 @@ const DEFAULT_IMAGE = 'https://placehold.co/400x400?text=No+Image';
 
 export default function ProductCard({ product }: ProductCardProps) {
     const { addToCart } = useCart();
-    const { id, name, price, images } = product;
+    const { id, title, price, images } = product;
     const imageUrl = images?.[0] || DEFAULT_IMAGE;
-    const altText = name ? `Image of ${name}` : 'Product image';
+    const altText = title ? `Image of ${title}` : 'Product image';
 
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -32,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
             </Link>
             <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{name}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{title}</h3>
                 <div className="flex items-center justify-between mb-4">
                     <span className="text-lg font-bold text-gray-900">${price.toFixed(2)}</span>
                 </div>

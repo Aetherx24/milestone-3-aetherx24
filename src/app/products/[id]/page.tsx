@@ -73,14 +73,14 @@ export default function ProductDetail({ params }: PageProps) {
         <div className="relative aspect-square w-full bg-white rounded-lg">
           <Image
             src={product.images?.[0] || 'https://placehold.co/400x400?text=No+Image'}
-            alt={product.name}
+            alt={product.title}
             fill
             className="object-contain p-4"
             unoptimized
           />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.title}</h1>
           <p className="text-2xl font-bold text-indigo-600 mb-4">
             ${product.price.toFixed(2)}
           </p>

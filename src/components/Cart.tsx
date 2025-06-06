@@ -23,14 +23,14 @@ export default function Cart() {
           <div className="relative w-20 h-20">
             <Image
               src={item.product.images[0]}
-              alt={item.product.name}
+              alt={item.product.title}
               fill
               className="object-cover rounded"
               sizes="80px"
             />
           </div>
           <div className="flex-1">
-            <h3 className="font-medium">{item.product.name}</h3>
+            <h3 className="font-medium">{item.product.title}</h3>
             <p className="text-gray-500">${item.product.price.toFixed(2)}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export default function Cart() {
           </button>
         </div>
       ))}
-      <div className="flex justify-between items-center pt-4 border-t">
+      <div className="flex justify-between items-center mt-4">
         <span className="font-medium">Total: ${total.toFixed(2)}</span>
         <button
           onClick={clearCart}

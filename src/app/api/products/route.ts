@@ -29,37 +29,57 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log('Received product data:', body);
 
     // Validate required fields
     if (!body.title || !body.price || !body.description || !body.categoryId || !body.images) {
+      console.log('Missing fields:', {
+        title: !!body.title,
+        price: !!body.price,
+        description: !!body.description,
+        categoryId: !!body.categoryId,
+        images: !!body.images
+      });
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
+    const productData = {
+      title: body.title,
+      price: Number(body.price),
+      description: body.description,
+      categoryId: Number(body.categoryId),
+      images: Array.isArray(body.images) ? body.images : [body.images],
+    };
+    console.log('Sending product data to API:', productData);
+
     const response = await fetch(`${API_URL}/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        title: body.title,
-        price: Number(body.price),
-        description: body.description,
-        categoryId: Number(body.categoryId),
-        images: Array.isArray(body.images) ? body.images : [body.images],
-      }),
+      body: JSON.stringify(productData),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      throw new Error(errorData?.message || 'Failed to create product');
+      console.error('API Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorData
+      });
+      throw new Error(errorData?.message || `Failed to create product: ${response.statusText}`);
     }
 
     const product = await response.json();
-    revalidatePath('/products');
+    console.log('Product created successfully:', product);
+    
+    // Revalidate all relevant paths
+    revalidatePath('/');
     revalidatePath('/admin');
+    revalidatePath('/products');
     return NextResponse.json(product);
   } catch (error) {
     console.error('Error creating product:', error);

@@ -59,26 +59,32 @@ export default function ProductForm({ params }: ProductFormProps) {
       
       const method = params.action === 'create' ? 'POST' : 'PUT';
 
+      const productData = {
+        ...formData,
+        price: parseFloat(formData.price),
+        categoryId: parseInt(formData.categoryId),
+      };
+
+      console.log('Submitting product data:', productData);
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          categoryId: parseInt(formData.categoryId),
-        }),
+        body: JSON.stringify(productData),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to save product');
+        throw new Error(data.error || 'Failed to save product');
       }
 
       router.push('/admin');
     } catch (err) {
       console.error('Error saving product:', err);
-      setError('Error saving product');
+      setError(err instanceof Error ? err.message : 'Error saving product');
     } finally {
       setLoading(false);
     }

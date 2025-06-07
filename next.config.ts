@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true,
   images: {
+    domains: ['api.escuelajs.co'],
     remotePatterns: [
       {
         protocol: "https",
@@ -21,7 +22,12 @@ const nextConfig: NextConfig = {
       }
     ],
     dangerouslyAllowSVG: true,
-  }
+  },
+  turbopack: {
+    rules: {
+      // Configure any Turbopack-specific rules here
+    },
+  },
 };
 
 export default nextConfig;

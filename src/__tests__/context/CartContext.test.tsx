@@ -22,7 +22,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
 const mockProduct: Product = {
   id: 1,
-  name: 'Test Product',
+  title: 'Test Product',
   description: 'Test Description',
   price: 99.99,
   images: ['/test-image.jpg'],

@@ -34,7 +34,7 @@ describe('Products API', () => {
       })
 
       const request = new NextRequest('http://localhost:3000/api/products?offset=0&limit=10')
-      const response = await GET(request)
+      const response = await GET()
       const data = await response.json()
 
       expect(response.status).toBe(200)
@@ -48,7 +48,7 @@ describe('Products API', () => {
       ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'))
 
       const request = new NextRequest('http://localhost:3000/api/products')
-      const response = await GET(request)
+      const response = await GET()
       const data = await response.json()
 
       expect(response.status).toBe(500)
